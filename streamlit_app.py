@@ -22,22 +22,6 @@ st.markdown("""
 # --- 2. API Key එක ලබා ගැනීම ---
 if "GEMINI_API_KEY" in st.secrets:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-
-# genai.configure එකට පල්ලෙහායින් මේක දාන්න
-try:
-    available_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-    print(f"සර්වර් එකේ තියෙන මොඩල් ලිස්ට් එක: {available_models}")
-except Exception as e:
-    print(f"මොඩල් ලිස්ට් එක ගන්න බැරි වුණා: {e}")
-
-# ... ඉතිරි කෝඩ් එක ...
-
-# මොඩල් එක හදන තැන මෙන්න මෙහෙම පාවිච්චි කරන්න (safe way)
-try:
-    model = genai.GenerativeModel("gemini-1.5-flash", system_instruction=persona)
-except Exception:
-    # 1.5-flash නැත්නම් පරණ 1.0-pro එක හරි ට්‍රයි කරනවා
-    model = genai.GenerativeModel("gemini-pro", system_instruction=persona)
 else:
     st.error("අඩෝ... API Key එක සෙට් කරලා නෑ මල්ලි! (Secrets බලපන්)")
     st.stop()
