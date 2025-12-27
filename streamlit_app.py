@@ -124,24 +124,35 @@ if prompt := st.chat_input("මොකක්ද තොපිට තියෙන �
         # මැසේජ් එක පෙන්වන්න හිස් තැනක් (Placeholder) හදනවා
         message_placeholder = st.empty()
         
-        # --- 1. Countdown එක (Rate Limit වලට විසඳුම) ---
-        # තත්පර 2ක් දීම ප්‍රමාණවත් (වැඩිපුර වෙලා ගත්තම User ට එපා වෙනවා)
+        # --- 1. Countdown එක ---
         for i in range(2, 0, -1):
             message_placeholder.markdown(f"ස් ස් ස්... තව තත්පර {i}ක් ඉන්න😁 ⏳")
             time.sleep(1)
         
-        # --- 2. Typing Indicator (පට්ට වැදගත් කොටස) ---
-        # API එකෙන් ඩේටා එනකම් මේක පෙන්නනවා
+        # --- 2. Typing Indicator ---
         message_placeholder.markdown("**රවිඳු සර් Typing...** ✍️")
         
         full_response = ""
         
         try:
-            # Gemini 3 Flash Preview Model එක භාවිතා කිරීම
+            # --- MEMORY LOGIC START ---
+            # 1. පරණ Chat History එක Gemini ට තේරෙන විදියට හදාගැනීම
+            gemini_history = []
+            # අන්තිම මැසේජ් එක (දැන් යැවූ එක) හැර අනිත් ඔක්කොම හිස්ට්‍රි එකට දානවා
+            for msg in st.session_state.messages[:-1]:
+                role = "user" if msg["role"] == "user" else "model"
+                gemini_history.append({"role": role, "parts": [msg["content"]]})
+
+            # 2. Model එක Initialize කිරීම
             model = genai.GenerativeModel("gemini-3-flash-preview", system_instruction=persona)
             
-            # Streaming Response
-            response = model.generate_content(prompt, stream=True)
+            # 3. Chat Session එක පටන් ගැනීම (History එක්ක)
+            chat = model.start_chat(history=gemini_history)
+            
+            # 4. අලුත් ප්‍රශ්නය යැවීම (send_message function එකෙන්)
+            # මේකෙන් තමයි Memory එක වැඩ කරන්නේ
+            response = chat.send_message(prompt, stream=True)
+            # --- MEMORY LOGIC END ---
             
             for chunk in response:
                 if chunk.text:
