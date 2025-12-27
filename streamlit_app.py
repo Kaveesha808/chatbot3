@@ -125,7 +125,7 @@ if prompt := st.chat_input("මොකක්ද තොපිට තියෙන �
         message_placeholder = st.empty()
         
         # --- 1. Countdown එක ---
-        for i in range(2, 0, -1):
+        for i in range(6, 0, -1):
             message_placeholder.markdown(f"ස් ස් ස්... තව තත්පර {i}ක් ඉන්න😁 ⏳")
             time.sleep(1)
         
@@ -180,3 +180,4 @@ with st.sidebar:
     if st.button("කක්කා දාල හේදුවා වගේ චැට් එක මකන්න"):
         st.session_state.messages = []
         st.rerun()
+
