@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import time
 from PyPDF2 import PdfReader
 import google.generativeai as genai
 
@@ -78,31 +79,36 @@ for message in st.session_state.messages:
 
 # User ප්‍රශ්නය ඇසීම
 if prompt := st.chat_input("මොකක්ද තොපිට තියෙන ප්‍රශ්නේ?"):
-    # User message එක සේව් කිරීම
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Bot (Ravindu Sir) පිළිතුර ලබා ගැනීම
     with st.chat_message("assistant"):
+        message_placeholder = st.empty()
+        full_response = ""
+        
         try:
-            model = genai.GenerativeModel("gemini-2.5-flash", system_instruction=persona)
+            # --- ස් ස් ස් මෙහේ බලපං! මෙන්න මෙතනයි Delay එක දාන්න ඕනේ ---
+            # තත්පර 2ක් විතර ඉන්න කියලා සර්වර් එකට කියනවා
+            time.sleep(2) 
             
-            # පිළිතුර Stream විදියට ලබා ගැනීම
-            full_response = ""
-            message_placeholder = st.empty()
+            model = genai.GenerativeModel("gemini-3-flash-preview", system_instruction=persona)
             
             response = model.generate_content(prompt, stream=True)
             
             for chunk in response:
-                full_response += chunk.text
-                message_placeholder.markdown(full_response + "▌")
+                if chunk.text:
+                    full_response += chunk.text
+                    message_placeholder.markdown(full_response + "▌")
             
             message_placeholder.markdown(full_response)
             st.session_state.messages.append({"role": "assistant", "content": full_response})
             
         except Exception as e:
-            st.error(f"Error එකක් ආවා මල්ලි: {str(e)}")
+            if "429" in str(e):
+                st.error("ස් ස් ස්... පොඩ්ඩක් ඉඳපං! තොපි මැසේජ් ගහන වේගයට සර්වර් එකටත් කෙලවෙලා. විනාඩියක් ඉඳලා ආයෙ වරෙන්!")
+            else:
+                st.error(f"Error එකක් ආවා මල්ලි: {str(e)}")
 
 # Sidebar එකේ දැනුම ගැන විස්තර (Optional)
 with st.sidebar:
@@ -114,6 +120,7 @@ with st.sidebar:
     if st.button("කක්කා දාල හේදුවා වගේ චැට් එක මකන්න"):
         st.session_state.messages = []
         st.rerun()
+
 
 
 
