@@ -7,16 +7,54 @@ import google.generativeai as genai
 # --- 1. පේජ් එකේ සැකසුම් (UI Config) ---
 st.set_page_config(page_title="Ravindu Sir AI", page_icon="🎓", layout="centered")
 
-# Custom CSS - පට්ට Dark ලස්සන UI එකක් සඳහා
+# --- CUSTOM CSS (CLEAN RED & BLACK THEME) ---
 st.markdown("""
     <style>
-    .stApp { background-color: #0e1117; color: #e0e0e0; }
-    .stChatMessage { border-radius: 15px; margin-bottom: 10px; }
-    .stChatInput { border-radius: 25px; }
-    /* රවිඳු සර්ගේ මැසේජ් එකේ පාට */
+    /* මුළු පිටුපසම කළු පාට (Deep Black) */
+    .stApp { 
+        background-color: #050505; 
+        color: #e0e0e0; 
+    }
+    
+    /* Headers (මාතෘකා) රතු පාටින් */
+    h1, h2, h3 {
+        color: #ff3333 !important;
+    }
+    
+    /* Chat Input Box එකේ Border එක රතු පාට */
+    .stChatInput { 
+        border-color: #ff3333 !important; 
+    }
+    
+    /* User Message (අපි යවන ඒවා) - Dark Grey */
+    [data-testid="stChatMessage"]:nth-child(odd) {
+        background-color: #121212;
+        border: 1px solid #333333;
+        color: #e0e0e0;
+    }
+
+    /* Ravindu Sir Message (සර්ගේ ඒවා) - Black with Red Border (Clean Look) */
     [data-testid="stChatMessage"]:nth-child(even) {
-        background-color: #1e293b;
-        border: 1px solid #334155;
+        background-color: #000000;
+        border: 1px solid #ff3333; /* Red Border only */
+        color: #ffcccc; /* Text එක ලා රතු/සුදු මිශ්‍ර */
+    }
+    
+    /* Sidebar Design */
+    [data-testid="stSidebar"] {
+        background-color: #0a0a0a;
+        border-right: 1px solid #330000;
+    }
+    
+    /* Button Styles (Red Buttons) */
+    .stButton>button {
+        color: white;
+        background-color: #990000;
+        border: 1px solid #ff0000;
+    }
+    .stButton>button:hover {
+        background-color: #ff0000;
+        color: white;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -68,7 +106,7 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # Header එක
-st.markdown("<h2 style='text-align: center; color: #3b82f6;'>රවිඳු සර් AI 🎓</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center; color: #ff3333;'>රවිඳු සර් AI 🎓</h2>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; font-size: 12px; color: #888;'>ලංකාවේ විශාලතම ICT පන්තිය</p>", unsafe_allow_html=True)
 
 # කලින් කරපු චැට් පෙන්වීම
@@ -89,12 +127,12 @@ if prompt := st.chat_input("මොකක්ද තොපිට තියෙන �
         # --- 1. Countdown එක (Rate Limit වලට විසඳුම) ---
         # තත්පර 2ක් දීම ප්‍රමාණවත් (වැඩිපුර වෙලා ගත්තම User ට එපා වෙනවා)
         for i in range(2, 0, -1):
-            message_placeholder.markdown(f"ස් ස් ස්... තව තත්පර {i}ක් ඉඳපං මෝඩයා! ⏳")
+            message_placeholder.markdown(f"ස් ස් ස්... තව තත්පර {i}ක් ඉන්න😁 ⏳")
             time.sleep(1)
         
         # --- 2. Typing Indicator (පට්ට වැදගත් කොටස) ---
         # API එකෙන් ඩේටා එනකම් මේක පෙන්නනවා
-        message_placeholder.markdown("රවිඳු සර් Typing... ✍️")
+        message_placeholder.markdown("**රවිඳු සර් Typing...** ✍️")
         
         full_response = ""
         
